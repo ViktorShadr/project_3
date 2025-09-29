@@ -41,26 +41,27 @@ class ApiClient(BaseApiClient):
             endpoint = "/" + endpoint
 
         url = f"{self.__base_url}{endpoint}"
+        print(url)
         try:
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
-            return cast(dict[str, Any], response.json())
+            return response.json()
         except requests.RequestException as e:
             print(f"Ошибка GET-запроса: {e}")
             return None
 
-    def get_companies(self, pages: int = 0, area: int = 113) -> list | None:
-        """Получение компаний"""
+    def get_companies(self, list_of_companies) -> list | None:
+        """Получение списка компаний"""
 
         if not self.is_available():  # проверка соединения
             print("Ошибка соединения")
             return None
 
         all_info_companies = []
-        for company in self.list_of_companies:
+        for company in list_of_companies:
             data = self.get(
                 endpoint="vacancies",
-                params={"employer_id": company},
+                params={"employer_id": company}
             )
             if not data:
                 return None
