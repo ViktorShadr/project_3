@@ -2,17 +2,16 @@ from typing import Any, Optional, cast
 
 import requests
 
-from config import BASE_URL_HH_RU
+from config import BASE_URL_HH_RU, LIST_OF_COMPANIES
 from project_3.api.base import BaseApiClient
 
 
 class ApiClient(BaseApiClient):
     """Класс для работы с API и проверки соединения."""
 
-    def __init__(self, search_query: str, per_page: int, base_url: str = BASE_URL_HH_RU) -> None:
+    def __init__(self, list_of_companies: list = LIST_OF_COMPANIES, base_url: str = BASE_URL_HH_RU) -> None:
         self.__base_url = base_url
-        self.__search_query = search_query
-        self.__per_page = per_page
+        self.list_of_companies = list_of_companies
 
     def __check_connection(self) -> bool:
         """Приватный метод проверки соединения с API"""
@@ -50,24 +49,22 @@ class ApiClient(BaseApiClient):
             print(f"Ошибка GET-запроса: {e}")
             return None
 
-    def get_vacancy(self, pages: int = 0, area: int = 113) -> list | None:
-        """Получение списка вакансий по ключевому слову"""
+    def get_companies(self, pages: int = 0, area: int = 113) -> list | None:
+        """Получение компаний"""
 
         if not self.is_available():  # проверка соединения
             print("Ошибка соединения")
             return None
 
-        data = self.get(
-            endpoint="vacancies",
-            params={"text": self.__search_query, "area": area, "per_page": self.__per_page, "page": pages},
-        )
+        all_info_companies = []
+        for company in self.list_of_companies:
+            data = self.get(
+                endpoint="vacancies",
+                params={"employer_id": company},
+            )
+            if not data:
+                return None
 
-        if not data:
-            return None
+            all_info_companies.append(data)
+        return all_info_companies
 
-        results = []
-        for item in data.get("items", []):
-            vacancy = Vacancy.from_dict(item)
-            results.append(vacancy)
-
-        return results
