@@ -25,7 +25,7 @@ def main():
             for vacancy in vacancies:
                 db.insert_vacancy(vacancy, employer_id)
 
-    # 4. Меню для пользователя
+    # Интерфейс для пользователя
     while True:
         print("\n Выберите действие:")
         print("1 - Список всех компаний и количество вакансий")

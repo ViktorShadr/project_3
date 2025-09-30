@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class BaseApiClient(ABC):
+    """Абстрактный метод для ApiClient"""
 
     @abstractmethod
     def _check_connection(self) -> bool:

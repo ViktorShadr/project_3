@@ -4,6 +4,7 @@ from project_3.config import DB_PARAMS
 
 
 def create_database():
+    """Функция для создания базы данных. Создает новую базу если ее не существует"""
     conn = psycopg2.connect(
         dbname="postgres",
         user=DB_PARAMS["user"],
@@ -26,6 +27,7 @@ def create_database():
 
 
 def create_tables():
+    """Функция создания таблиц"""
     conn = psycopg2.connect(**DB_PARAMS)
     cur = conn.cursor()
 
