@@ -21,15 +21,24 @@ def main():
 
     # Прогресс по компаниям
     for employer_id in tqdm(LIST_OF_COMPANIES, desc="Обработка компаний"):
-        with alive_bar(1, title=f"Получаем данные о работодателе {employer_id}") as bar:
-            employer = api.get_employer(employer_id)
-            if employer:
-                db.insert_employer(employer)
-                bar.text(f"Получаем вакансии для {employer['name']}")
-                vacancies = api.get_vacancies(employer_id)
-                for vacancy in vacancies:
-                    db.insert_vacancy(vacancy, employer_id)
-            bar()
+        print(f"\nПолучаем данные о работодателе {employer_id}...")
+        employer = api.get_employer(employer_id)
+        if not employer:
+            print(f"❌ Не удалось получить данные о работодателе {employer_id}")
+            continue
+
+        db.insert_employer(employer)
+        vacancies = api.get_vacancies(employer_id)
+
+        print(f"Получаем вакансии для {employer['name']} ({len(vacancies)} шт.)...")
+
+        # Прогресс по вакансиям
+        with alive_bar(len(vacancies), title=f"Обработка вакансий {employer['name']}") as bar:
+            for vacancy in vacancies:
+                db.insert_vacancy(vacancy, employer_id)
+                bar()  # обновляем спиннер
+
+        print(f"✅ Вакансии для {employer['name']} обработаны")
 
     # Меню для пользователя
     while True:
