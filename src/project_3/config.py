@@ -1,5 +1,18 @@
+import os
+
+from dotenv import load_dotenv
+
 BASE_URL_HH_RU = "https://api.hh.ru"
 
+load_dotenv()
+
+DB_PARAMS = {
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST"),
+    "port": os.getenv("DB_PORT"),
+}
 # ID работодателей с hh.ru
 LIST_OF_COMPANIES = [
     1740,  # Яндекс
@@ -11,12 +24,5 @@ LIST_OF_COMPANIES = [
     907345,  # Росатом
     39305,  # Газпром
     3127,  # Лукойл
-    67611  # Тензор (Ярославль)
+    67611,  # Тензор (Ярославль)
 ]
-
-# Данные для подключения к PostgreSQL
-DB_NAME = "hh_vacancies"
-DB_USER = "postgres"
-DB_PASSWORD = "ShadrinV19852503!"
-DB_HOST = "localhost"
-DB_PORT = "5432"

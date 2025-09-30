@@ -1,12 +1,11 @@
 import psycopg2
-from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+
+from project_3.config import DB_PARAMS
 
 
 class DBManager:
     def __init__(self):
-        self.conn = psycopg2.connect(
-            dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
-        )
+        self.conn = psycopg2.connect(**DB_PARAMS)
         self.cur = self.conn.cursor()
 
     def insert_employer(self, employer: dict):
@@ -17,7 +16,7 @@ class DBManager:
             VALUES (%s, %s)
             ON CONFLICT (employer_id) DO NOTHING;
             """,
-            (employer["id"], employer["name"])
+            (employer["id"], employer["name"]),
         )
         self.conn.commit()
 
@@ -33,54 +32,73 @@ class DBManager:
             VALUES (%s, %s, %s, %s, %s, %s)
             ON CONFLICT (vacancy_id) DO NOTHING;
             """,
-            (vacancy["id"], employer_id, vacancy["name"], salary_from, salary_to, vacancy["alternate_url"])
+            (
+                vacancy["id"],
+                employer_id,
+                vacancy["name"],
+                salary_from,
+                salary_to,
+                vacancy["alternate_url"],
+            ),
         )
         self.conn.commit()
 
     def get_companies_and_vacancies_count(self):
         """Получить список всех компаний и количество вакансий у каждой"""
-        self.cur.execute("""
+        self.cur.execute(
+            """
         SELECT e.name, COUNT(v.vacancy_id)
         FROM employers e
         LEFT JOIN vacancies v ON e.employer_id = v.employer_id
         GROUP BY e.name;
-        """)
+        """
+        )
         return self.cur.fetchall()
 
     def get_all_vacancies(self):
         """Получить список всех вакансий"""
-        self.cur.execute("""
+        self.cur.execute(
+            """
         SELECT e.name, v.title, v.salary_from, v.salary_to, v.url
         FROM vacancies v
         JOIN employers e ON v.employer_id = e.employer_id;
-        """)
+        """
+        )
         return self.cur.fetchall()
 
     def get_avg_salary(self):
         """Средняя зарплата по вакансиям"""
-        self.cur.execute("SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND salary_to IS NOT NULL;")
+        self.cur.execute(
+            "SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND salary_to"
+            "IS NOT NULL;"
+        )
         return self.cur.fetchone()[0]
 
     def get_vacancies_with_higher_salary(self):
         """Вакансии с зарплатой выше средней"""
-        self.cur.execute("""
+        self.cur.execute(
+            """
         SELECT e.name, v.title, v.salary_from, v.salary_to, v.url
         FROM vacancies v
         JOIN employers e ON v.employer_id = e.employer_id
         WHERE (v.salary_from + v.salary_to)/2.0 > (
-            SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND salary_to IS NOT NULL
-        );
-        """)
+            SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND salary_to IS
+            NOT NULL) ORDER BY (v.salary_from + v.salary_to)/2.0 DESC;
+        """
+        )
         return self.cur.fetchall()
 
     def get_vacancies_with_keyword(self, keyword: str):
         """Вакансии по ключевому слову"""
-        self.cur.execute("""
+        self.cur.execute(
+            """
         SELECT e.name, v.title, v.salary_from, v.salary_to, v.url
         FROM vacancies v
         JOIN employers e ON v.employer_id = e.employer_id
         WHERE v.title ILIKE %s;
-        """, (f"%{keyword}%",))
+        """,
+            (f"%{keyword}%",),
+        )
         return self.cur.fetchall()
 
     def close(self):

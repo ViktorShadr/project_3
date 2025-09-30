@@ -1,21 +1,28 @@
 from typing import Any, Optional
+
 import requests
 
-from config import BASE_URL_HH_RU, LIST_OF_COMPANIES
 from project_3.api.base import BaseApiClient
+from project_3.config import BASE_URL_HH_RU, LIST_OF_COMPANIES
 
 
 class ApiClient(BaseApiClient):
     """Класс для работы с API hh.ru и проверки соединения."""
 
-    def __init__(self, list_of_companies: list[int] = LIST_OF_COMPANIES, base_url: str = BASE_URL_HH_RU) -> None:
+    def __init__(
+        self,
+        list_of_companies: list[int] = LIST_OF_COMPANIES,
+        base_url: str = BASE_URL_HH_RU,
+    ) -> None:
         self.__base_url = base_url
         self.list_of_companies = list_of_companies
 
     def _check_connection(self) -> bool:
         """Приватный метод проверки соединения с API"""
         try:
-            response = requests.get(f"{self.__base_url}/vacancies", params={"per_page": 1}, timeout=5)
+            response = requests.get(
+                f"{self.__base_url}/vacancies", params={"per_page": 1}, timeout=5
+            )
             return response.status_code == 200
         except requests.RequestException:
             return False
@@ -24,7 +31,9 @@ class ApiClient(BaseApiClient):
         """Публичный метод для проверки доступности сервиса"""
         return self._check_connection()
 
-    def get(self, endpoint: str = "", params: Optional[dict[str, Any]] = None) -> Optional[dict[str, Any]]:
+    def get(
+        self, endpoint: str = "", params: Optional[dict[str, Any]] = None
+    ) -> Optional[dict[str, Any]]:
         """Выполняет GET-запрос к API"""
         if endpoint and not endpoint.startswith("/"):
             endpoint = "/" + endpoint
@@ -44,5 +53,7 @@ class ApiClient(BaseApiClient):
 
     def get_vacancies(self, employer_id: int) -> list[dict]:
         """Получить список вакансий работодателя"""
-        data = self.get("/vacancies", params={"employer_id": employer_id, "per_page": 50})
+        data = self.get(
+            "/vacancies", params={"employer_id": employer_id, "per_page": 50}
+        )
         return data.get("items", []) if data else []

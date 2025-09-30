@@ -1,21 +1,21 @@
-from api.client import ApiClient
-from db_manager import DBManager
-from db_init import create_database, create_tables
-from config import LIST_OF_COMPANIES
+from project_3.api.client import ApiClient
+from project_3.config import LIST_OF_COMPANIES
+from project_3.db.db_init import create_database, create_tables
+from project_3.db.db_manager import DBManager
 
 
 def main():
-    # 1. Создание базы и таблиц
+    # Создание базы и таблиц
     create_database()
     create_tables()
 
-    # 2. Проверка доступности API
+    # Проверка доступности API
     api = ApiClient(list_of_companies=LIST_OF_COMPANIES)
     if not api.is_available():
         print("Сервис hh.ru недоступен. Попробуйте позже.")
         return
 
-    # 3. Получение данных и запись в БД
+    # Получение данных и запись в БД
     db = DBManager()
     for employer_id in LIST_OF_COMPANIES:
         employer = api.get_employer(employer_id)
@@ -47,7 +47,11 @@ def main():
 
         elif choice == "3":
             avg_salary = db.get_avg_salary()
-            print(f"Средняя зарплата: {avg_salary:.2f}" if avg_salary else "Нет данных по зарплатам")
+            print(
+                f"Средняя зарплата: {avg_salary:.2f}"
+                if avg_salary
+                else "Нет данных по зарплатам"
+            )
 
         elif choice == "4":
             for row in db.get_vacancies_with_higher_salary():
