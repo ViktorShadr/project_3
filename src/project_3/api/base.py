@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class BaseApiClient(ABC):
-    """Абстрактный метод для ApiClient"""
+class AbstractApiClient(ABC):
+    """Абстрактный класс для ApiClient"""
 
     @abstractmethod
     def _check_connection(self) -> bool:

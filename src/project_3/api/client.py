@@ -2,11 +2,11 @@ from typing import Any, Optional
 
 import requests
 
-from project_3.api.base import BaseApiClient
+from project_3.api.base import AbstractApiClient
 from project_3.config import BASE_URL_HH_RU, LIST_OF_COMPANIES
 
 
-class ApiClient(BaseApiClient):
+class ApiClient(AbstractApiClient):
     """Класс для работы с API hh.ru и проверки соединения."""
 
     def __init__(

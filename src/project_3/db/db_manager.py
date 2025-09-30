@@ -1,9 +1,10 @@
 import psycopg2
 
 from project_3.config import DB_PARAMS
+from project_3.db.base import AbstractDBManager
 
 
-class DBManager:
+class DBManager(AbstractDBManager):
     """Класс для подключения и работы с базой данных"""
     def __init__(self):
         self.conn = psycopg2.connect(**DB_PARAMS)
