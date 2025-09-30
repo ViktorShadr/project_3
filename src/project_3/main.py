@@ -1,8 +1,9 @@
+from tqdm import tqdm
+from alive_progress import alive_bar
 from project_3.api.client import ApiClient
 from project_3.config import LIST_OF_COMPANIES
 from project_3.db.db_init import create_database, create_tables
 from project_3.db.db_manager import DBManager
-
 
 def main():
     # Создание базы и таблиц
@@ -15,19 +16,24 @@ def main():
         print("Сервис hh.ru недоступен. Попробуйте позже.")
         return
 
-    # Получение данных и запись в БД
+    # Подключение к базе
     db = DBManager()
-    for employer_id in LIST_OF_COMPANIES:
-        employer = api.get_employer(employer_id)
-        if employer:
-            db.insert_employer(employer)
-            vacancies = api.get_vacancies(employer_id)
-            for vacancy in vacancies:
-                db.insert_vacancy(vacancy, employer_id)
 
-    # Интерфейс для пользователя
+    # Прогресс по компаниям
+    for employer_id in tqdm(LIST_OF_COMPANIES, desc="Обработка компаний"):
+        with alive_bar(1, title=f"Получаем данные о работодателе {employer_id}") as bar:
+            employer = api.get_employer(employer_id)
+            if employer:
+                db.insert_employer(employer)
+                bar.text(f"Получаем вакансии для {employer['name']}")
+                vacancies = api.get_vacancies(employer_id)
+                for vacancy in vacancies:
+                    db.insert_vacancy(vacancy, employer_id)
+            bar()
+
+    # Меню для пользователя
     while True:
-        print("\n Выберите действие:")
+        print("\nВыберите действие:")
         print("1 - Список всех компаний и количество вакансий")
         print("2 - Список всех вакансий")
         print("3 - Средняя зарплата по вакансиям")
