@@ -5,6 +5,7 @@ from project_3.config import LIST_OF_COMPANIES
 from project_3.db.db_init import create_database, create_tables
 from project_3.db.db_manager import DBManager
 
+
 def main():
     # Создание базы и таблиц
     create_database()
@@ -33,7 +34,9 @@ def main():
         print(f"Получаем вакансии для {employer['name']} ({len(vacancies)} шт.)...")
 
         # Прогресс по вакансиям
-        with alive_bar(len(vacancies), title=f"Обработка вакансий {employer['name']}") as bar:
+        with alive_bar(
+            len(vacancies), title=f"Обработка вакансий {employer['name']}"
+        ) as bar:
             for vacancy in vacancies:
                 db.insert_vacancy(vacancy, employer_id)
                 bar()  # обновляем спиннер

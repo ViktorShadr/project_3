@@ -13,7 +13,9 @@ dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "pylint (>=3.3.8,<4.0.0)",
     "tqdm (>=4.67.1,<5.0.0)",
-    "alive-progress (>=3.3.0,<4.0.0)"
+    "alive-progress (>=3.3.0,<4.0.0)",
+    "pytest (>=8.4.2,<9.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)"
 ]
 
 
