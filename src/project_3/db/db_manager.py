@@ -69,8 +69,8 @@ class DBManager:
     def get_avg_salary(self):
         """Средняя зарплата по вакансиям"""
         self.cur.execute(
-            "SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND salary_to"
-            "IS NOT NULL;"
+            """SELECT AVG((salary_from + salary_to)/2.0) FROM vacancies WHERE salary_from IS NOT NULL AND
+            salary_to IS NOT NULL;"""
         )
         return self.cur.fetchone()[0]
 
