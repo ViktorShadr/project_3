@@ -9,7 +9,7 @@ class DBManager:
         self.cur = self.conn.cursor()
 
     def insert_employer(self, employer: dict):
-        """Добавить работодателя"""
+        """Добавление работодателей"""
         self.cur.execute(
             """
             INSERT INTO employers (employer_id, name)
@@ -21,7 +21,7 @@ class DBManager:
         self.conn.commit()
 
     def insert_vacancy(self, vacancy: dict, employer_id: int):
-        """Добавить вакансию"""
+        """Добавление вакансий"""
         salary = vacancy.get("salary") or {}
         salary_from = salary.get("from")
         salary_to = salary.get("to")
