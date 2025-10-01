@@ -2,7 +2,7 @@ from project_3.api.client import ApiClient
 from project_3.config import LIST_OF_COMPANIES
 from project_3.db.db_init import create_database, create_tables
 from project_3.db.db_manager import DBManager
-from project_3.utils.helpers import process_companies, main_menu
+from project_3.utils.helpers import main_menu, process_companies
 
 
 def main():

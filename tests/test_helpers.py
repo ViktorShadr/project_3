@@ -1,7 +1,7 @@
-import pytest
 from unittest.mock import MagicMock, patch
 
-from project_3.utils.helpers import process_companies, display_companies, display_vacancies, main, main_menu
+from project_3.utils.helpers import (display_companies, display_vacancies,
+                                     main, main_menu, process_companies)
 
 
 def test_process_companies_calls_api_and_db():
@@ -61,11 +61,13 @@ def test_display_vacancies_prints_default(capsys):
 
 
 def test_main_api_unavailable(capsys):
-    with patch("project_3.utils.helpers.create_database"), \
-        patch("project_3.utils.helpers.create_tables"), \
-        patch("project_3.utils.helpers.ApiClient") as mock_api, \
-        patch("project_3.utils.helpers.DBManager") as mock_db, \
-        patch("builtins.input", return_value="0"):
+    with patch("project_3.utils.helpers.create_database"), patch(
+        "project_3.utils.helpers.create_tables"
+    ), patch("project_3.utils.helpers.ApiClient") as mock_api, patch(
+        "project_3.utils.helpers.DBManager"
+    ) as _, patch(
+        "builtins.input", return_value="0"
+    ):
         mock_api.return_value.is_available.return_value = False
 
         main()
@@ -75,12 +77,15 @@ def test_main_api_unavailable(capsys):
 
 
 def test_main_api_available():
-    with patch("project_3.utils.helpers.create_database"), \
-        patch("project_3.utils.helpers.create_tables"), \
-        patch("project_3.utils.helpers.ApiClient") as mock_api, \
-        patch("project_3.utils.helpers.DBManager") as mock_db, \
-        patch("project_3.utils.helpers.process_companies") as mock_process, \
-        patch("project_3.utils.helpers.main_menu") as mock_menu:
+    with patch("project_3.utils.helpers.create_database"), patch(
+        "project_3.utils.helpers.create_tables"
+    ), patch("project_3.utils.helpers.ApiClient") as mock_api, patch(
+        "project_3.utils.helpers.DBManager"
+    ) as mock_db, patch(
+        "project_3.utils.helpers.process_companies"
+    ) as mock_process, patch(
+        "project_3.utils.helpers.main_menu"
+    ) as mock_menu:
         mock_api.return_value.is_available.return_value = True
         db_instance = mock_db.return_value
 
@@ -92,8 +97,9 @@ def test_main_api_available():
 
 def test_main_menu_option_1(capsys):
     db = MagicMock()
-    with patch("builtins.input", side_effect=["1", "0"]), \
-        patch("project_3.utils.helpers.display_companies") as mock_display:
+    with patch("builtins.input", side_effect=["1", "0"]), patch(
+        "project_3.utils.helpers.display_companies"
+    ) as mock_display:
         main_menu(db)
         mock_display.assert_called_once_with(db)
 
@@ -103,8 +109,9 @@ def test_main_menu_option_1(capsys):
 
 def test_main_menu_option_2():
     db = MagicMock()
-    with patch("builtins.input", side_effect=["2", "0"]), \
-        patch("project_3.utils.helpers.display_vacancies") as mock_display:
+    with patch("builtins.input", side_effect=["2", "0"]), patch(
+        "project_3.utils.helpers.display_vacancies"
+    ) as mock_display:
         main_menu(db)
         mock_display.assert_any_call(db)
 
@@ -121,18 +128,22 @@ def test_main_menu_option_3(capsys):
 
 def test_main_menu_option_4():
     db = MagicMock()
-    with patch("builtins.input", side_effect=["4", "0"]), \
-        patch("project_3.utils.helpers.display_vacancies") as mock_display:
+    with patch("builtins.input", side_effect=["4", "0"]), patch(
+        "project_3.utils.helpers.display_vacancies"
+    ) as mock_display:
         main_menu(db)
         mock_display.assert_called_once_with(db, db.get_vacancies_with_higher_salary())
 
 
 def test_main_menu_option_5():
     db = MagicMock()
-    with patch("builtins.input", side_effect=["5", "Python", "0"]), \
-        patch("project_3.utils.helpers.display_vacancies") as mock_display:
+    with patch("builtins.input", side_effect=["5", "Python", "0"]), patch(
+        "project_3.utils.helpers.display_vacancies"
+    ) as mock_display:
         main_menu(db)
-        mock_display.assert_called_once_with(db, db.get_vacancies_with_keyword("Python"))
+        mock_display.assert_called_once_with(
+            db, db.get_vacancies_with_keyword("Python")
+        )
 
 
 def test_main_menu_invalid_choice(capsys):

@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from project_3.config import DB_PARAMS
 from project_3.db.db_init import create_database, create_tables
@@ -25,6 +25,7 @@ def test_create_database_already_exists(mock_connect):
     )
     mock_cursor.close.assert_called_once()
     mock_conn.close.assert_called_once()
+
 
 @patch("project_3.db.db_init.psycopg2.connect")
 def test_create_database_new(mock_connect):
@@ -54,8 +55,14 @@ def test_create_tables(mock_connect):
     create_tables()
 
     # Проверяем, что CREATE TABLE вызван для обеих таблиц
-    assert any("CREATE TABLE IF NOT EXISTS employers" in call[0][0] for call in mock_cursor.execute.call_args_list)
-    assert any("CREATE TABLE IF NOT EXISTS vacancies" in call[0][0] for call in mock_cursor.execute.call_args_list)
+    assert any(
+        "CREATE TABLE IF NOT EXISTS employers" in call[0][0]
+        for call in mock_cursor.execute.call_args_list
+    )
+    assert any(
+        "CREATE TABLE IF NOT EXISTS vacancies" in call[0][0]
+        for call in mock_cursor.execute.call_args_list
+    )
     mock_conn.commit.assert_called_once()
     mock_cursor.close.assert_called_once()
     mock_conn.close.assert_called_once()
